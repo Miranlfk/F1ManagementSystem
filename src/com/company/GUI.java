@@ -406,7 +406,7 @@ public class GUI extends JFrame {
     //TODO Put these get Date methods to a new class. Easier to read code
     public String getRandomDate() {
         GregorianCalendar gc = new GregorianCalendar();
-        int year = randBetween(2020, 2025);
+        int year = randBetween(2021, 2025);
         gc.set(GregorianCalendar.YEAR, year);
         int dayOfYear = randBetween(1, gc.getActualMaximum(GregorianCalendar.DAY_OF_YEAR));
         gc.set(GregorianCalendar.DAY_OF_YEAR, dayOfYear);
@@ -416,6 +416,10 @@ public class GUI extends JFrame {
         return start + (int)Math.round(Math.random() * (end - start));
     }
 }
+
+
+
+
 
 
 

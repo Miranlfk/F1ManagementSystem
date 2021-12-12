@@ -21,8 +21,9 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
     @Override
     public void createDriver() {
 
-        boolean raceStuff = false;
+        boolean raceStuff = false, teamexist = false;
         int num1s = 0, num2s = 0, num3s = 0;
+        String team = " ";
 
         System.out.print("Enter new Driver's Name: ");
         String name = input.next();
@@ -30,8 +31,25 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
         System.out.print("Enter new Driver's Location: ");
         String location = input.next();
 
-        System.out.print("Enter new Driver's Team: ");
-        String team = input.next();
+        while (!teamexist){
+            System.out.print("Enter new Driver's Team: ");
+            team = input.next();
+            for (int i = 0; i < DriverStats.size(); i++) {
+                Formula1Driver f1 = DriverStats.get(i);
+                if (!(team.equalsIgnoreCase(f1.getTeam()))) {
+                    continue;
+
+                }else {
+                    System.out.println("ERROR! Team Already exists, Re-Enter the Team Name");
+                    teamexist = true;
+                    break;
+                }
+            }
+
+        }
+
+
+
 
         System.out.print("Enter number of races particpated by New Driver: ");
         int races = input.nextInt();
@@ -267,7 +285,6 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
 
     @Override
     public void showDetailsGUI() {
-        System.out.println("size1: "+ DriverStats.size());
 
         GUI guiNew = new GUI(DriverStats, ListofRaces);
 
