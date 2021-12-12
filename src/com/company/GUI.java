@@ -48,6 +48,7 @@ public class GUI extends JFrame {
     public GUI(ArrayList<Formula1Driver> inDriverstats, ArrayList<Races> Races) {
         F1obj = new Formula1ChampionshipManager(inDriverstats, Races);
 
+
         driverTableFrame = new JFrame();
         addNewRaceFrame = new JFrame();
         raceTableFrame = new JFrame();
@@ -246,9 +247,10 @@ public class GUI extends JFrame {
 
     public Races calculateRandomRace() {
         Races newRace = new Races();
+        Date newDate = new Date();
         //TODO scan through list of races to see if race name exist, then assign unique race name. Can use for loop i
         newRace.setName("Race1");
-        newRace.setDate(getRandomDate());
+        newRace.setDate(newDate.getRandomDate());
         ArrayList<Formula1Driver> startingPositions = new ArrayList<>(F1obj.DriverStats);
         ArrayList<Formula1Driver> endingPositions = new ArrayList<>(F1obj.DriverStats);
         Collections.shuffle(startingPositions);
@@ -261,16 +263,17 @@ public class GUI extends JFrame {
     //TODO complete function to genrate the new race statisticaly
     public Races calculateStatRace() {
         Races newRace = new Races();
+        Date newDate = new Date();
         //TODO scan through list of races to see if race name exist, then assign unique race name. Can use for loop i
         newRace.setName("Race1");
-        newRace.setDate(getRandomDate());
+        newRace.setDate(newDate.getRandomDate());
         return newRace;
     }
 
     //TODO complete function to update the DriverList using new race
     public void updateDriverDetails(Races newRace) {
         // Example code:
-        F1obj.DriverStats.get(0).setNoPoints(F1obj.DriverStats.get(0).getNoPoints()+10);
+        F1obj.DriverStats.get(0).setNoPoints(F1obj.DriverStats.get(0).getNoPoints() + 10);
     }
 
     public void displayNewRaceRetails(Races newRace, String title) {
@@ -311,7 +314,7 @@ public class GUI extends JFrame {
         for (int i = 0; i < newRace.getRacePositions().size(); i++) {
             for (int j = 0; j < newRace.getRaceDetails().size(); j++) {
                 if (newRace.getRacePositions().get(i).getTeam().equals(newRace.getRaceDetails().get(j).getTeam())) {
-                    endingPos.add(Integer.toString(j+1));
+                    endingPos.add(Integer.toString(j + 1));
                 }
             }
         }
@@ -320,7 +323,7 @@ public class GUI extends JFrame {
         for (int i = 0; i < newRace.getRacePositions().size(); i++) {
             Object[] data = new Object[]{
                     newRace.getRacePositions().get(i).getName(),
-                    i+1,
+                    i + 1,
                     endingPos.get(i),
                     newRace.getRacePositions().get(i).getTeam()
             };
@@ -402,20 +405,8 @@ public class GUI extends JFrame {
         raceTableFrame.add(raceTablePanel);
 
     }
-
-    //TODO Put these get Date methods to a new class. Easier to read code
-    public String getRandomDate() {
-        GregorianCalendar gc = new GregorianCalendar();
-        int year = randBetween(2021, 2025);
-        gc.set(GregorianCalendar.YEAR, year);
-        int dayOfYear = randBetween(1, gc.getActualMaximum(GregorianCalendar.DAY_OF_YEAR));
-        gc.set(GregorianCalendar.DAY_OF_YEAR, dayOfYear);
-        return(gc.get(GregorianCalendar.DAY_OF_MONTH)+ "/" + (gc.get(GregorianCalendar.MONTH) + 1) + "/" + gc.get(GregorianCalendar.YEAR));
-    }
-    public static int randBetween(int start, int end) {
-        return start + (int)Math.round(Math.random() * (end - start));
-    }
 }
+
 
 
 

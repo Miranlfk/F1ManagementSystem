@@ -32,18 +32,21 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
         String location = input.next();
 
         while (!teamexist){
+            int count = 0;
             System.out.print("Enter new Driver's Team: ");
             team = input.next();
             for (int i = 0; i < DriverStats.size(); i++) {
                 Formula1Driver f1 = DriverStats.get(i);
-                if (!(team.equalsIgnoreCase(f1.getTeam()))) {
-                    continue;
+                if (team.equalsIgnoreCase(f1.getTeam())) {
+                    count++;
+                    System.out.println("ERROR! Team Already exists, Re-Enter the Team Name");
 
                 }else {
-                    System.out.println("ERROR! Team Already exists, Re-Enter the Team Name");
                     teamexist = true;
-                    break;
                 }
+            }
+            if (count>0){
+                teamexist = false;
             }
 
         }
@@ -111,25 +114,28 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
     }
 
     @Override
-    public void changeTeamsDriver() {
+    public void changeTeamsDriver() { //KSTAR GOD SAVE US PLIS
 
         boolean driverThere = false;
+        int count = 0;
         while (!(driverThere)){
             System.out.println("Enter the Driver's Team of the Driver you wish to Change: ");
             String team = input.next();
-            System.out.println("Enter the New Driver's Name: ");
-            String newDriver = input.next();
-            System.out.println("Enter the New Driver's Location: ");
-            String newDriverLoc = input.next();
             for (int i=0; i < DriverStats.size(); i++) {
                 Formula1Driver f1 = DriverStats.get(i);
                 if (team.equalsIgnoreCase(f1.getTeam())){
+                    System.out.println("Enter the New Driver's Name: ");
+                    String newDriver = input.next();
+                    System.out.println("Enter the New Driver's Location: ");
+                    String newDriverLoc = input.next();
                     f1.setName(newDriver);
                     f1.setLocation(newDriverLoc);
                     DriverStats.set(i,f1);
                     driverThere = true;
+
                 }
             }
+
         }
 
     }
@@ -221,15 +227,15 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
     public void saveDetails() {
         try {
 
-            FileWriter boothFile = new FileWriter("Championship.txt");
+            FileWriter champfile = new FileWriter("Championship.txt");
 
             for (int i=0; i < DriverStats.size(); i++){
                 Formula1Driver f1 = DriverStats.get(i);
-                boothFile.write("Driver Name: " + f1.getName() + ", Team: " + f1.getTeam() + ", Country: " + f1.getLocation() + ", Points: " + f1.getNoPoints()
+                champfile.write("Driver Name: " + f1.getName() + ", Team: " + f1.getTeam() + ", Country: " + f1.getLocation() + ", Points: " + f1.getNoPoints()
                         + ", Number of 1st Place: " + f1.getNoFirst() + ", Number of 2nd Place: " + f1.getNoSecond() + ", Number of 3rd Place: " + f1.getNoThird()
                         + ", Number of Races: " + f1.getNoRaces() + '\n');
             }
-            boothFile.close();
+            champfile.close();
             System.out.println("Champion.txt has been created!");
         } catch (IOException e) {
             e.printStackTrace();
