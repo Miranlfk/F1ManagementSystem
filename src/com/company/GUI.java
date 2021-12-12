@@ -1,54 +1,64 @@
 package com.company;
 
-import javax.swing.*;
-import javax.swing.JFrame;
-import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLOutput;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.GregorianCalendar;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 
 
 public class GUI extends JFrame {
+    JFrame driverTableFrame;
+    JFrame addNewRaceFrame;
+    JFrame raceTableFrame;
 
-
-    JFrame frame1;
-    JFrame frame2;
     JPanel panel1;
     JPanel panel2;
-    JPanel panelTable;
     JPanel panel3;
     JPanel panel4;
-    JPanel panel5;
-    JPanel panel6;
+    JPanel driverTablePanel;
+    JPanel newRaceDetailsPanel;
+    JPanel raceTablePanel;
     String[] Heading;
-    JTable table;
-    JTable dateInfo;
-    JTable raceDates;
-    DefaultTableModel tableModel;
-    DefaultTableModel FindModel;
-    DefaultTableModel DateModel;
+    JTable driverTable;
+    JTable newRaceDetailsTable;
+    JTable raceTable;
+    DefaultTableModel driverTableModel;
+    DefaultTableModel newRaceDetailsModel;
+    DefaultTableModel raceTableModel;
 
-    int raceCount = 0;
+    Formula1ChampionshipManager F1obj;
 
-    Formula1ChampionshipManager F1obj = new Formula1ChampionshipManager();
-    ArrayList<Races> newRaceInfo = new ArrayList<>();
+    public GUI(ArrayList<Formula1Driver> inDriverstats, ArrayList<Races> Races) {
+        F1obj = new Formula1ChampionshipManager(inDriverstats, Races);
 
+        driverTableFrame = new JFrame();
+        addNewRaceFrame = new JFrame();
+        raceTableFrame = new JFrame();
 
-    GUI() {
+        addNewRaceFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        raceTableFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        frame1 = new JFrame();
-        frame2 = new JFrame();
-
-        frame1.setSize(1000, 800);
-        frame1.setTitle("Formula1 Championship ");
-        frame1.setLayout(null);
-        frame1.setVisible(true);
+        driverTableFrame.setSize(1000, 800);
+        driverTableFrame.setTitle("Formula1 Championship ");
+        driverTableFrame.setLayout(null);
+        driverTableFrame.setVisible(true);
 
         //Setting up panels and tables for Frame 1
         panel1 = new JPanel();
@@ -56,19 +66,17 @@ public class GUI extends JFrame {
         panel1.setBounds(0, 0, 1000, 250);
         panel1.setLayout(new BorderLayout());
 
-        panelTable = new JPanel();
-        panelTable.setBackground(new Color(0x2E8BC0));
-        panelTable.setBounds(0, 250, 1000, 400);
-        panelTable.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Driver Statistics", TitledBorder.CENTER, TitledBorder.TOP, Font.getFont("SANS_SERIF"), Color.getColor("0x75E6DA")));
-        panelTable.setLayout(new BorderLayout());
-
+        driverTablePanel = new JPanel();
+        driverTablePanel.setBackground(new Color(0x2E8BC0));
+        driverTablePanel.setBounds(0, 250, 1000, 400);
+        driverTablePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Driver Statistics", TitledBorder.CENTER, TitledBorder.TOP, Font.getFont("SANS_SERIF"), Color.getColor("0x75E6DA")));
+        driverTablePanel.setLayout(new BorderLayout());
 
         panel2 = new JPanel();
         panel2.setBackground(new Color(0x2E8BC0));
         panel2.setBounds(0, 650, 1000, 100);
         panel2.setLayout(new FlowLayout());
         ImageIcon logo = new ImageIcon("logo.png");
-
 
         JLabel label = new JLabel("Formula1 Championship 2021");
         label.setBounds(40, 50, 50, 70);
@@ -83,95 +91,93 @@ public class GUI extends JFrame {
 
         panel1.add(label);
 
+        //displays the driver driverTable
+        displayDriverTable();
+
+        //driver driverTable sort buttons
+        addSortPointButton();
+        addSortPlacesButton();
+
+        driverTableFrame.add(panel1);
+        driverTableFrame.add(panel2);
+        driverTableFrame.add(driverTablePanel);
+
+        // setting up addNewRaceFrame to add a race
+        addNewRaceFrame.setSize(1000, 900);
+        addNewRaceFrame.setTitle("Formula1 Championship New Race");
+        addNewRaceFrame.setLayout(null);
+        addNewRaceFrame.setVisible(false);
+
+        //button displays random new race and updates existing drivers
+        addRandomRaceButton();
+        //button displays new race using stats and updates existing drivers
+        addStatRaceButton();
+
+        raceTableFrame.setSize(1000, 900);
+        raceTableFrame.setTitle("Formula1 Championship Race Table");
+        raceTableFrame.setLayout(null);
+        raceTableFrame.setVisible(false);
+        //button displays new frame with table of races and searchbar
+        addViewRaceTableButton();
+    }
+
+    //displays the driver driverTable
+    public void displayDriverTable() {
         //JTable Column
         Heading = new String[]{"NAME OF DRIVER", "Team Name", "Location", "First Positions", "Second Positions", "Third Positions", "Total Points", "Number Of Participated Races"};
 
-        tableModel = new DefaultTableModel(0, 0);
-        table = new JTable(tableModel);
-        tableModel.setColumnIdentifiers(Heading);
-        table.setModel(tableModel);
+        driverTableModel = new DefaultTableModel(0, 0);
+        driverTable = new JTable(driverTableModel);
+        driverTableModel.setColumnIdentifiers(Heading);
+        driverTable.setModel(driverTableModel);
 
         //Adding data to JTable
-        for (int i = 0; i < F1obj.DriverStats.size(); i++) {
-            Object[] data = new Object[]{
-                    F1obj.DriverStats.get(i).getName(),
-                    F1obj.DriverStats.get(i).getTeam(),
-                    F1obj.DriverStats.get(i).getLocation(),
-                    F1obj.DriverStats.get(i).getNoFirst(),
-                    F1obj.DriverStats.get(i).getNoSecond(),
-                    F1obj.DriverStats.get(i).getNoThird(),
-                    F1obj.DriverStats.get(i).getNoPoints(),
-                    F1obj.DriverStats.get(i).getNoRaces()
-            };
-
-            tableModel.addRow(data);
-
-        }
-
-        table.setBounds(0, 250, 1000, 400);
-        table.setOpaque(true);
-        JScrollPane sp1 = new JScrollPane(table);
+        drawDriverTable();
+        driverTable.setBounds(0, 250, 1000, 400);
+        driverTable.setOpaque(true);
+        JScrollPane sp1 = new JScrollPane(driverTable);
         sp1.setBounds(0, 250, 1000, 400);
+        driverTablePanel.add(sp1);
+    }
 
-
-        //button that sort according to ascending on points
+    //button that sort according to ascending on points
+    public void addSortPointButton() {
         JButton btn1 = new JButton("Ascending Points");
         btn1.setBounds(200, 20, 40, 15);
-
         btn1.addActionListener(new ActionListener() {
-                                   @Override
-                                   public void actionPerformed(ActionEvent e) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Comparator<Formula1Driver> comparator = new Comparator<Formula1Driver>() {
+                    public int compare(Formula1Driver driver1, Formula1Driver driver2) {
+                        if (driver1.getNoPoints() > driver2.getNoPoints()) {
+                            return 1;
+                        } else if (driver1.getNoPoints() == driver2.getNoPoints()) {
+                            if (driver1.getNoFirst() > driver2.getNoFirst()) {
+                                return 1;
+                            } else {
+                                return -1;
+                            }
 
-                                       Comparator<Formula1Driver> comparator = new Comparator<Formula1Driver>() {
+                        } else {
+                            return -1;
+                        }
+                    }
+                };
+                F1obj.DriverStats.sort(comparator);
+                drawDriverTable();
+            }
+        });
+        panel2.add(btn1);
+    }
 
-                                           public int compare(Formula1Driver driver1, Formula1Driver driver2) {
-                                               if (driver1.getNoPoints() > driver2.getNoPoints()) {
-                                                   return 1;
-                                               } else if (driver1.getNoPoints() == driver2.getNoPoints()) {
-                                                   if (driver1.getNoFirst() > driver2.getNoFirst()) {
-                                                       return 1;
-                                                   } else {
-                                                       return -1;
-                                                   }
-
-                                               } else {
-                                                   return -1;
-                                               }
-                                           }
-                                       };
-                                       F1obj.DriverStats.sort(comparator);
-
-
-                                       tableModel.setRowCount(0);
-                                       for (int x = 0; x < F1obj.DriverStats.size(); x++) {
-
-                                           Object[] data = new Object[]{
-                                                   F1obj.DriverStats.get(x).getName(),
-                                                   F1obj.DriverStats.get(x).getTeam(),
-                                                   F1obj.DriverStats.get(x).getLocation(),
-                                                   F1obj.DriverStats.get(x).getNoFirst(),
-                                                   F1obj.DriverStats.get(x).getNoSecond(),
-                                                   F1obj.DriverStats.get(x).getNoThird(),
-                                                   F1obj.DriverStats.get(x).getNoPoints(),
-                                                   F1obj.DriverStats.get(x).getNoRaces()
-                                           };
-
-                                           tableModel.addRow(data);
-
-                                       }
-
-                                   }
-                               }
-        );
-        //button that sort according to descending on First Position
+    //button that sort according to descending on First Position
+    public void addSortPlacesButton() {
         JButton btn2 = new JButton("Descending to FirstPosition");
         btn2.setBounds(250, 20, 40, 15);
         btn2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 Comparator<Formula1Driver> comparator = new Comparator<Formula1Driver>() {
-
                     public int compare(Formula1Driver driver1, Formula1Driver driver2) {
                         if (driver1.getNoFirst() > driver2.getNoFirst()) {
                             return -1;
@@ -181,274 +187,237 @@ public class GUI extends JFrame {
                     }
                 };
                 F1obj.DriverStats.sort(comparator);
-
-
-                tableModel.setRowCount(0);
-                for (int x = 0; x < F1obj.DriverStats.size(); x++) {
-                    Object[] data = new Object[]{
-                            F1obj.DriverStats.get(x).getName(),
-                            F1obj.DriverStats.get(x).getTeam(),
-                            F1obj.DriverStats.get(x).getLocation(),
-                            F1obj.DriverStats.get(x).getNoFirst(),
-                            F1obj.DriverStats.get(x).getNoSecond(),
-                            F1obj.DriverStats.get(x).getNoThird(),
-                            F1obj.DriverStats.get(x).getNoPoints(),
-                            F1obj.DriverStats.get(x).getNoRaces()
-                    };
-                    tableModel.addRow(data);
-                }
-
+                drawDriverTable();
             }
-
         });
-        panelTable.add(sp1);
-        panel2.add(btn1);
         panel2.add(btn2);
-        frame1.add(panel1);
-        frame1.add(panel2);
-        frame1.add(panelTable);
+    }
 
-        frame2.setSize(1000, 900);
-        frame2.setTitle("Formula1 Championship Race Info");
-        frame2.setLayout(null);
-        frame2.setVisible(false);
+    public void drawDriverTable() {
+        driverTableModel.setRowCount(0);
+        for (int x = 0; x < F1obj.DriverStats.size(); x++) {
+            Object[] data = new Object[]{
+                    F1obj.DriverStats.get(x).getName(),
+                    F1obj.DriverStats.get(x).getTeam(),
+                    F1obj.DriverStats.get(x).getLocation(),
+                    F1obj.DriverStats.get(x).getNoFirst(),
+                    F1obj.DriverStats.get(x).getNoSecond(),
+                    F1obj.DriverStats.get(x).getNoThird(),
+                    F1obj.DriverStats.get(x).getNoPoints(),
+                    F1obj.DriverStats.get(x).getNoRaces()
+            };
+            driverTableModel.addRow(data);
+        }
+    }
 
-
-        //Button that showing JFrame 2 and Adding a new Race
-        JButton AddRace = new JButton("Add Race");
-        AddRace.setBounds(290, 20, 40, 15);
-        panel2.add(AddRace);
-        AddRace.addActionListener(new ActionListener() {
-
+    public void addRandomRaceButton() {
+        JButton randomRaceButton = new JButton("Add Random Race");
+        randomRaceButton.setBounds(300, 20, 40, 15);
+        randomRaceButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                frame2.setVisible(true);
-
-
-                Heading = new String[]{"NAME OF DRIVER", "Team Name", "Location", "Starting Position", "First Positions", "Second Positions", "Third Positions", "Total Points", "Number Of Participated Races"};
-
-                tableModel = new DefaultTableModel(0, 0);
-                table = new JTable(tableModel);
-
-
-                tableModel.setColumnIdentifiers(Heading);
-                table.setModel(tableModel);
-
-                //Generate Random starting Positions and Validating Overlapped positions
-                LinkedHashSet<Integer> startPositionStore = new LinkedHashSet<>();
-
-                for (int x = 0; x < F1obj.DriverStats.size(); x++) {
-                    int position = (int) (Math.random() * F1obj.DriverStats.size() - 1 + 1) + 1;
-                    startPositionStore.add(position);
-                }
-                boolean equality = true;
-
-                //Adding unique positions to LinkedHashSet
-                while (equality) {
-                    if (startPositionStore.size() != F1obj.DriverStats.size()) {
-                        int newPosition = (int) (Math.random() * F1obj.DriverStats.size() - 1 + 1) + 1;
-                        if (!startPositionStore.contains(newPosition)) {
-                            startPositionStore.add(newPosition);
-                        }
-                    } else {
-                        equality = false;
-                    }
-                }
-
-                Integer[] positionArray = startPositionStore.toArray(new Integer[startPositionStore.size()]);//Converting HashSet to an Array
-
-                //Adding new info to table
-                for (int x = 0; x < F1obj.DriverStats.size(); x++) {
-
-                    Object[] data = new Object[]{
-                            F1obj.DriverStats.get(x).getName(),
-                            F1obj.DriverStats.get(x).getTeam(),
-                            F1obj.DriverStats.get(x).getLocation(),
-                            positionArray[x],
-                            F1obj.DriverStats.get(x).getNoFirst(),
-                            F1obj.DriverStats.get(x).getNoSecond(),
-                            F1obj.DriverStats.get(x).getNoThird(),
-                            F1obj.DriverStats.get(x).getNoPoints(),
-                            F1obj.DriverStats.get(x).getNoRaces()
-                    };
-
-
-                    tableModel.addRow(data);
-
-                }
-                table.setBounds(0, 0, 1000, 200);
-                table.setOpaque(true);
-                JScrollPane sp2 = new JScrollPane(table);
-                sp2.setBounds(0, 0, 1000, 200);
-
-                //Setting up Frame 2 panels and Buttons
-                panel3 = new JPanel();
-                panel3.setBackground(new Color(0x2E8BC0));
-                panel3.setBounds(0, 0, 1000, 250);
-                panel3.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Race Statistics", TitledBorder.CENTER, TitledBorder.TOP, Font.getFont("SANS_SERIF"), Color.getColor("0x75E6DA")));
-                panel3.setLayout(new BorderLayout());
-
-
-                panel4 = new JPanel(new FlowLayout());
-                panel4.setBackground(new Color(0x2E8BC0));
-                panel4.setBounds(0, 250, 1000, 100);
-                panel4.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "***************", TitledBorder.CENTER, TitledBorder.TOP, Font.getFont("SANS_SERIF"), Color.getColor("0x75E6DA")));
-
-
-                panel5 = new JPanel();
-                panel5.setBackground(new Color(0x2E8BC0));
-                panel5.setBounds(0, 350, 1000, 250);
-                panel5.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Race Dates", TitledBorder.CENTER, TitledBorder.TOP, Font.getFont("SANS_SERIF"), Color.getColor("0x75E6DA")));
-                panel5.setLayout(new BorderLayout());
-
-                panel6 = new JPanel();
-                panel6.setBackground(new Color(0x2E8BC0));
-                panel6.setBounds(0, 600, 1000, 250);
-                panel6.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Race History", TitledBorder.CENTER, TitledBorder.TOP, Font.getFont("SANS_SERIF"), Color.getColor("0x75E6DA")));
-                panel6.setLayout(new BorderLayout());
-
-
-                JButton StartRace = new JButton("StartRace");
-                StartRace.setBounds(200, 300, 400, 250);
-                ImageIcon StartIcon = new ImageIcon("Start.png");
-                StartRace.setBounds(200, 300, 400, 250);
-                StartRace.setFocusable(false);
-                StartRace.setIcon(StartIcon);
-
-                //Generating Random Final positions And Validating Positions
-                StartRace.addActionListener(new ActionListener() {
-                                                @Override
-                                                public void actionPerformed(ActionEvent e) {
-
-                                                    raceCount++;
-
-                                                    int final_position = 0;
-
-                                                    int random_position = (int) (Math.random() * 100);
-
-
-                                                    LinkedHashSet<Integer> finalPositionStore = new LinkedHashSet<>();
-                                                    boolean checkSize = true;
-                                                    while (checkSize) {
-
-
-                                                        for (int x = 0; x < positionArray.length; x++) {
-                                                            if (positionArray[x] == 1) {
-                                                                if (random_position <= 40) {
-                                                                    final_position = 1;
-                                                                } else {
-                                                                    final_position = (int) (Math.random() * F1obj.DriverStats.size() - 2 + 1) + 2;
-                                                                }
-                                                            } else if (positionArray[x] == 2) {
-                                                                if (random_position <= 70 && random_position > 40) {
-                                                                    final_position = 1;
-                                                                } else {
-                                                                    final_position = (int) (Math.random() * F1obj.DriverStats.size() - 2 + 1) + 2;
-                                                                }
-                                                            } else if (positionArray[x] == 3) {
-                                                                if (random_position <= 80 && random_position > 70) {
-                                                                    final_position = 1;
-                                                                } else {
-                                                                    final_position = (int) (Math.random() * F1obj.DriverStats.size() - 2 + 1) + 2;
-                                                                }
-                                                            } else if (positionArray[x] == 4) {
-                                                                if (random_position <= 90 && random_position > 80) {
-                                                                    final_position = 1;
-                                                                } else {
-                                                                    final_position = (int) (Math.random() * F1obj.DriverStats.size() - 2 + 1) + 2;
-                                                                }
-                                                            } else if (positionArray[x] == 5) {
-                                                                if (random_position <= 92 && random_position > 90) {
-                                                                    final_position = 1;
-                                                                } else {
-                                                                    final_position = (int) (Math.random() * F1obj.DriverStats.size() - 2 + 1) + 2;
-                                                                }
-                                                            } else if (positionArray[x] == 6) {
-                                                                if (random_position <= 94 && random_position > 92) {
-                                                                    final_position = 1;
-                                                                } else {
-                                                                    final_position = (int) (Math.random() * F1obj.DriverStats.size() - 2 + 1) + 2;
-                                                                }
-
-                                                            } else if (positionArray[x] == 7) {
-                                                                if (random_position <= 96 && random_position > 94) {
-                                                                    final_position = 1;
-                                                                } else {
-                                                                    final_position = (int) (Math.random() * F1obj.DriverStats.size() - 2 + 1) + 2;
-                                                                }
-                                                            } else if (positionArray[x] == 8) {
-                                                                if (random_position <= 98 && random_position > 96) {
-                                                                    final_position = 1;
-                                                                } else {
-                                                                    final_position = (int) (Math.random() * F1obj.DriverStats.size() - 2 + 1) + 2;
-                                                                }
-                                                            } else if (positionArray[x] == 9) {
-                                                                if (random_position <= 100 && random_position > 98) {
-                                                                    final_position = 1;
-                                                                } else {
-                                                                    final_position = (int) (Math.random() * F1obj.DriverStats.size() - 2 + 1) + 2;
-                                                                }
-                                                            }
-                                                            finalPositionStore.add(final_position);
-                                                            if (finalPositionStore.size() == F1obj.DriverStats.size()) {
-                                                                checkSize = false;
-                                                            }
-                                                            //updating player Statistics
-
-
-                                                        }
-                                                    }
-                                                    Integer[] finalPositionsArray = finalPositionStore.toArray(new Integer[finalPositionStore.size()]);
-                                                    for (int x = 0; x < finalPositionsArray.length; x++) {
-                                                        F1obj.DriverStats.get(x).setNoRaces(F1obj.DriverStats.get(x).getNoRaces() + 1);
-                                                        switch (finalPositionsArray[x]) {
-                                                            case 1 -> {
-                                                                F1obj.DriverStats.get(x).setNoPoints(F1obj.DriverStats.get(x).getNoPoints() + 25);
-                                                                F1obj.DriverStats.get(x).setNoFirst(F1obj.DriverStats.get(x).getNoFirst() + 1);
-
-                                                            }
-                                                            case 2 -> {
-                                                                F1obj.DriverStats.get(x).setNoPoints(F1obj.DriverStats.get(x).getNoPoints() + 18);
-                                                                F1obj.DriverStats.get(x).setNoSecond(F1obj.DriverStats.get(x).getNoSecond() + 1);
-
-                                                            }
-                                                            case 3 -> {
-                                                                F1obj.DriverStats.get(x).setNoPoints(F1obj.DriverStats.get(x).getNoPoints() + 15);
-                                                                F1obj.DriverStats.get(x).setNoThird(F1obj.DriverStats.get(x).getNoThird() + 1);
-
-                                                            }
-                                                            case 4 -> F1obj.DriverStats.get(x).setNoPoints(F1obj.DriverStats.get(x).getNoPoints() + 12);
-                                                            case 5 -> F1obj.DriverStats.get(x).setNoPoints(F1obj.DriverStats.get(x).getNoPoints() + 10);
-                                                            case 6 -> F1obj.DriverStats.get(x).setNoPoints(F1obj.DriverStats.get(x).getNoPoints() + 8);
-                                                            case 7 -> F1obj.DriverStats.get(x).setNoPoints(F1obj.DriverStats.get(x).getNoPoints() + 6);
-                                                            case 8 -> F1obj.DriverStats.get(x).setNoPoints(F1obj.DriverStats.get(x).getNoPoints() + 4);
-                                                            case 9 -> F1obj.DriverStats.get(x).setNoPoints(F1obj.DriverStats.get(x).getNoPoints() + 2);
-                                                            case 10 -> F1obj.DriverStats.get(x).setNoPoints(F1obj.DriverStats.get(x).getNoPoints() + 1);
-
-                                                        }
-                                                    }
-                                                    finalPositionStore.clear();
-
-
-                                                    Heading = new String[]{"NAME OF DRIVER", "Team Name", "Location", "Starting Position", "Final position", "First Positions", "Second Positions", "Third Positions", "Total Points", "Number Of Participated Races", "Date"};
-                                                    tableModel.setRowCount(0);
-                                                    tableModel.setColumnCount(0);
-                                                    tableModel.setColumnIdentifiers(Heading);
-
-                                                    DateFormat formatter = new SimpleDateFormat("dd-MM-YYYY");
-                                                    Date date = new Date();
-
-
-                                                }
-                                            }
-                );
-
+                Races newRace = calculateRandomRace();
+                String title = "Added New Random Race";
+                updateDriverDetails(newRace);
+                F1obj.ListofRaces.add(newRace);
+                displayNewRaceRetails(newRace, title);
+                drawDriverTable();
             }
-
         });
-        validate();
+        panel2.add(randomRaceButton);
+    }
+
+    public void addStatRaceButton() {
+        JButton statRaceButton = new JButton("Add Stat Race");
+        statRaceButton.setBounds(350, 20, 40, 15);
+        statRaceButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Races newRace = calculateStatRace();
+                String title = "Added New Statistical Race";
+                updateDriverDetails(newRace);
+                F1obj.ListofRaces.add(newRace);
+                displayNewRaceRetails(newRace, title);
+                drawDriverTable();
+            }
+        });
+        panel2.add(statRaceButton);
+    }
+
+    public Races calculateRandomRace() {
+        Races newRace = new Races();
+        //TODO scan through list of races to see if race name exist, then assign unique race name. Can use for loop i
+        newRace.setName("Race1");
+        newRace.setDate(getRandomDate());
+        ArrayList<Formula1Driver> startingPositions = new ArrayList<>(F1obj.DriverStats);
+        ArrayList<Formula1Driver> endingPositions = new ArrayList<>(F1obj.DriverStats);
+        Collections.shuffle(startingPositions);
+        Collections.shuffle(endingPositions);
+        newRace.setRacePositions(startingPositions);
+        newRace.setRaceDetails(endingPositions);
+        return newRace;
+    }
+
+    //TODO complete function to genrate the new race statisticaly
+    public Races calculateStatRace() {
+        Races newRace = new Races();
+        //TODO scan through list of races to see if race name exist, then assign unique race name. Can use for loop i
+        newRace.setName("Race1");
+        newRace.setDate(getRandomDate());
+        return newRace;
+    }
+
+    //TODO complete function to update the DriverList using new race
+    public void updateDriverDetails(Races newRace) {
+        // Example code:
+        F1obj.DriverStats.get(0).setNoPoints(F1obj.DriverStats.get(0).getNoPoints()+10);
+    }
+
+    public void displayNewRaceRetails(Races newRace, String title) {
+        addNewRaceFrame.setVisible(true);
+        panel3 = new JPanel();
+        panel3.setBackground(new Color(0x2E8BC0));
+        panel3.setBounds(0, 650, 1000, 100);
+        panel3.setLayout(new FlowLayout());
+
+        newRaceDetailsPanel = new JPanel();
+        newRaceDetailsPanel.setBackground(new Color(0x2E8BC0));
+        newRaceDetailsPanel.setBounds(0, 250, 1000, 400);
+        newRaceDetailsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Driver Statistics", TitledBorder.CENTER, TitledBorder.TOP, Font.getFont("SANS_SERIF"), Color.getColor("0x75E6DA")));
+        newRaceDetailsPanel.setLayout(new BorderLayout());
+
+        // TODO format labels
+        // TODO put new label title to show title of page(use title variable)
+        JLabel label = new JLabel("Race Name: " + newRace.getName() + "  Date: " + newRace.getDate());
+        label.setBounds(40, 50, 50, 70);
+        label.setFont(new Font("SANS_SERIF", Font.ITALIC | Font.BOLD, 40));
+        label.setForeground(new Color(0x0C2D48));
+        label.setHorizontalTextPosition(JLabel.CENTER);
+        label.setVerticalTextPosition(JLabel.TOP);
+        label.setVerticalAlignment(JLabel.TOP);
+        label.setHorizontalAlignment(JLabel.CENTER);
+        label.setIconTextGap(-200);
+
+        //JTable Column
+        Heading = new String[]{"Driver Name", "Starting Position", "Ending Position", "Team Name"};
+        newRaceDetailsModel = new DefaultTableModel(0, 0);
+        newRaceDetailsTable = new JTable(newRaceDetailsModel);
+        newRaceDetailsModel.setColumnIdentifiers(Heading);
+        newRaceDetailsTable.setModel(newRaceDetailsModel);
+        newRaceDetailsModel.setRowCount(0);
+
+        //array list to store the ending positions using starting positions of a driver
+        ArrayList<String> endingPos = new ArrayList<>();
+        for (int i = 0; i < newRace.getRacePositions().size(); i++) {
+            for (int j = 0; j < newRace.getRaceDetails().size(); j++) {
+                if (newRace.getRacePositions().get(i).getTeam().equals(newRace.getRaceDetails().get(j).getTeam())) {
+                    endingPos.add(Integer.toString(j+1));
+                }
+            }
+        }
+
+        //Adding data to JTable
+        for (int i = 0; i < newRace.getRacePositions().size(); i++) {
+            Object[] data = new Object[]{
+                    newRace.getRacePositions().get(i).getName(),
+                    i+1,
+                    endingPos.get(i),
+                    newRace.getRacePositions().get(i).getTeam()
+            };
+            newRaceDetailsModel.addRow(data);
+        }
+        newRaceDetailsTable.setBounds(0, 250, 1000, 400);
+        newRaceDetailsTable.setOpaque(true);
+        JScrollPane sp2 = new JScrollPane(newRaceDetailsTable);
+        sp2.setBounds(0, 250, 1000, 400);
+        newRaceDetailsPanel.add(sp2);
+        panel3.add(label);
+        addNewRaceFrame.add(panel3);
+        addNewRaceFrame.add(newRaceDetailsPanel);
+    }
+
+    public void addViewRaceTableButton() {
+        JButton viewRaceTableButton = new JButton("View Race Tabel");
+        viewRaceTableButton.setBounds(400, 20, 40, 15);
+        viewRaceTableButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                viewRaceTableFrame();
+            }
+        });
+        panel2.add(viewRaceTableButton);
+    }
+
+    public void viewRaceTableFrame() {
+        raceTableFrame.setVisible(true);
+        panel4 = new JPanel();
+        panel4.setBackground(new Color(0x2E8BC0));
+        panel4.setBounds(0, 650, 1000, 100);
+        panel4.setLayout(new FlowLayout());
+
+        raceTablePanel = new JPanel();
+        raceTablePanel.setBackground(new Color(0x2E8BC0));
+        raceTablePanel.setBounds(0, 250, 1000, 400);
+        raceTablePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Driver Statistics", TitledBorder.CENTER, TitledBorder.TOP, Font.getFont("SANS_SERIF"), Color.getColor("0x75E6DA")));
+        raceTablePanel.setLayout(new BorderLayout());
+
+        // TODO format labels
+        JLabel label = new JLabel("View Race Details");
+        label.setBounds(40, 50, 50, 70);
+        label.setFont(new Font("SANS_SERIF", Font.ITALIC | Font.BOLD, 40));
+        label.setForeground(new Color(0x0C2D48));
+        label.setHorizontalTextPosition(JLabel.CENTER);
+        label.setVerticalTextPosition(JLabel.TOP);
+        label.setVerticalAlignment(JLabel.TOP);
+        label.setHorizontalAlignment(JLabel.CENTER);
+        label.setIconTextGap(-200);
+
+        //JTable Column
+        Heading = new String[]{"Race Name", "Race Date", "Number of Drivers"};
+        raceTableModel = new DefaultTableModel(0, 0);
+        raceTable = new JTable(raceTableModel);
+        raceTableModel.setColumnIdentifiers(Heading);
+        raceTable.setModel(raceTableModel);
+        raceTableModel.setRowCount(0);
+
+        //TODO sort race arraylist using date
+
+        //Adding data to JTable
+        for (int i = 0; i < F1obj.ListofRaces.size(); i++) {
+            Object[] data = new Object[]{
+                    F1obj.ListofRaces.get(i).getName(),
+                    F1obj.ListofRaces.get(i).getDate(),
+                    F1obj.ListofRaces.get(i).getRaceDetails().size()
+            };
+            raceTableModel.addRow(data);
+        }
+
+        raceTable.setBounds(0, 250, 1000, 400);
+        raceTable.setOpaque(true);
+        JScrollPane sp3 = new JScrollPane(raceTable);
+        sp3.setBounds(0, 250, 1000, 400);
+        raceTablePanel.add(sp3);
+        panel4.add(label);
+        raceTableFrame.add(panel4);
+        raceTableFrame.add(raceTablePanel);
+
+    }
+
+    //TODO Put these get Date methods to a new class. Easier to read code
+    public String getRandomDate() {
+        GregorianCalendar gc = new GregorianCalendar();
+        int year = randBetween(2020, 2025);
+        gc.set(GregorianCalendar.YEAR, year);
+        int dayOfYear = randBetween(1, gc.getActualMaximum(GregorianCalendar.DAY_OF_YEAR));
+        gc.set(GregorianCalendar.DAY_OF_YEAR, dayOfYear);
+        return(gc.get(GregorianCalendar.DAY_OF_MONTH)+ "/" + (gc.get(GregorianCalendar.MONTH) + 1) + "/" + gc.get(GregorianCalendar.YEAR));
+    }
+    public static int randBetween(int start, int end) {
+        return start + (int)Math.round(Math.random() * (end - start));
     }
 }
+
+
+
 
 

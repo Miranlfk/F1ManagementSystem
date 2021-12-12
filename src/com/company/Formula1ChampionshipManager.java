@@ -11,7 +11,12 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
 
     int Points [] = {0, 25, 18, 15, 12, 10, 8, 6, 4, 2, 1};
 
+    public Formula1ChampionshipManager(ArrayList<Formula1Driver> DriverStats, ArrayList<Races> races) {
+        this.DriverStats = DriverStats;
+        this.ListofRaces = races;
+    }
 
+    public Formula1ChampionshipManager(){}
 
     @Override
     public void createDriver() {
@@ -220,39 +225,39 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
         try {
             s = new Scanner(new File("Championship.txt"));
 
-        while (s.hasNext()){
+            while (s.hasNext()){
 
-            String line = s.nextLine();
-            line = line.replace("Driver Name:","");
-            line = line.replace("Team:","");
-            line = line.replace("Country:","");
-            line = line.replace("Points:","");
-            line = line.replace("Number of 1st Place:","");
-            line = line.replace("Number of 2nd Place:","");
-            line = line.replace("Number of 3rd Place:","");
-            line = line.replace("Number of Races:","");
-            line = line.replace(" ","");
-            ArrayList<String> sepWords = new ArrayList<String>(Arrays.asList(line.split(",")));
-            Formula1Driver f1 = new Formula1Driver();
-            for (int i=0 ; i<sepWords.size();  i++){
+                String line = s.nextLine();
+                line = line.replace("Driver Name:","");
+                line = line.replace("Team:","");
+                line = line.replace("Country:","");
+                line = line.replace("Points:","");
+                line = line.replace("Number of 1st Place:","");
+                line = line.replace("Number of 2nd Place:","");
+                line = line.replace("Number of 3rd Place:","");
+                line = line.replace("Number of Races:","");
+                line = line.replace(" ","");
+                ArrayList<String> sepWords = new ArrayList<String>(Arrays.asList(line.split(",")));
+                Formula1Driver f1 = new Formula1Driver();
+                for (int i=0 ; i<sepWords.size();  i++){
 
-                f1.setName(sepWords.get(0));
-                f1.setTeam(sepWords.get(1));
-                f1.setLocation(sepWords.get(2));
-                f1.setNoPoints(Integer.parseInt(sepWords.get(3)));
-                f1.setNoFirst(Integer.parseInt(sepWords.get(4)));
-                f1.setNoSecond(Integer.parseInt(sepWords.get(5)));
-                f1.setNoThird(Integer.parseInt(sepWords.get(6)));
-                f1.setNoRaces(Integer.parseInt(sepWords.get(7)));
+                    f1.setName(sepWords.get(0));
+                    f1.setTeam(sepWords.get(1));
+                    f1.setLocation(sepWords.get(2));
+                    f1.setNoPoints(Integer.parseInt(sepWords.get(3)));
+                    f1.setNoFirst(Integer.parseInt(sepWords.get(4)));
+                    f1.setNoSecond(Integer.parseInt(sepWords.get(5)));
+                    f1.setNoThird(Integer.parseInt(sepWords.get(6)));
+                    f1.setNoRaces(Integer.parseInt(sepWords.get(7)));
 
-                //assign words in sepWords to object f1 arryalist
-                //assifn f1 to drivers arrylist[
+                    //assign words in sepWords to object f1 arryalist
+                    //assifn f1 to drivers arrylist[
+                }
+                DriverStats.add(f1);
+
             }
-            DriverStats.add(f1);
 
-        }
-
-        s.close();
+            s.close();
         } catch (FileNotFoundException e) {
             System.out.println("File Not Found");
             //e.printStackTrace();
@@ -262,9 +267,10 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
 
     @Override
     public void showDetailsGUI() {
+        System.out.println("size1: "+ DriverStats.size());
 
-        GUI guiNew = new GUI();
-        
+        GUI guiNew = new GUI(DriverStats, ListofRaces);
+
     }
 
 
