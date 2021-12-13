@@ -114,7 +114,7 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
     }
 
     @Override
-    public void changeTeamsDriver() { //KSTAR GOD SAVE US PLIS
+    public void changeTeamsDriver() {
 
         boolean driverThere = false;
         int count = 0;

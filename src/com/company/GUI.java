@@ -6,10 +6,10 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.GregorianCalendar;
+import java.text.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -53,8 +53,8 @@ public class GUI extends JFrame {
         addNewRaceFrame = new JFrame();
         raceTableFrame = new JFrame();
 
-        addNewRaceFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        raceTableFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        addNewRaceFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        raceTableFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         driverTableFrame.setSize(1000, 800);
         driverTableFrame.setTitle("Formula1 Championship ");
@@ -245,11 +245,16 @@ public class GUI extends JFrame {
         panel2.add(statRaceButton);
     }
 
+    public String getRaceName(){
+        String nameTemp = "Race";
+        return nameTemp+ " " +(1+F1obj.ListofRaces.size());
+    }
+
     public Races calculateRandomRace() {
         Races newRace = new Races();
-        Date newDate = new Date();
-        //TODO scan through list of races to see if race name exist, then assign unique race name. Can use for loop i
-        newRace.setName("Race1");
+        Dates newDate = new Dates();
+        String name = getRaceName();
+        newRace.setName(name);
         newRace.setDate(newDate.getRandomDate());
         ArrayList<Formula1Driver> startingPositions = new ArrayList<>(F1obj.DriverStats);
         ArrayList<Formula1Driver> endingPositions = new ArrayList<>(F1obj.DriverStats);
@@ -260,20 +265,72 @@ public class GUI extends JFrame {
         return newRace;
     }
 
-    //TODO complete function to genrate the new race statisticaly
+
     public Races calculateStatRace() {
         Races newRace = new Races();
-        Date newDate = new Date();
-        //TODO scan through list of races to see if race name exist, then assign unique race name. Can use for loop i
-        newRace.setName("Race1");
+        Dates newDate = new Dates();
+        String name = getRaceName();
+        newRace.setName(name);
         newRace.setDate(newDate.getRandomDate());
+        ArrayList<Formula1Driver> startingPositions = new ArrayList<>(F1obj.DriverStats);
+        ArrayList<Formula1Driver> endingPositionsTemp = new ArrayList<>(F1obj.DriverStats);
+        Collections.shuffle(startingPositions);
+        int chance = new Random().nextInt(100);
+        int winningPosition;
+        if (chance < 40) {
+            winningPosition = 1;
+        } else if (chance < 70) {
+            winningPosition = 2;
+        } else if (chance < 80) {
+            winningPosition = 3;
+        } else if (chance < 90) {
+            winningPosition = 4;
+        } else if (chance < 92) {
+            winningPosition = 5;
+        } else if (chance < 94) {
+            winningPosition = 6;
+        } else if (chance < 96) {
+            winningPosition = 7;
+        } else if (chance < 98) {
+            winningPosition = 8;
+        } else {
+            winningPosition = 9;
+        }
+        if (winningPosition > F1obj.DriverStats.size()){
+            winningPosition = F1obj.DriverStats.size();
+        }
+        Formula1Driver Driver1 = startingPositions.get(winningPosition-1);
+        System.out.println(Driver1.getName());
+        for (int i = 0 ; i < endingPositionsTemp.size(); i++){
+            if (endingPositionsTemp.get(i).getTeam().equals(Driver1.getTeam())){
+                endingPositionsTemp.remove(i);
+            }
+        }
+        ArrayList<Formula1Driver> endingPositionsFinal = new ArrayList<>();
+        endingPositionsFinal.add(Driver1);
+        endingPositionsFinal.addAll(endingPositionsTemp);
+        newRace.setRacePositions(startingPositions);
+        newRace.setRaceDetails(endingPositionsFinal);
+
         return newRace;
     }
 
     //TODO complete function to update the DriverList using new race
     public void updateDriverDetails(Races newRace) {
         // Example code:
-        F1obj.DriverStats.get(0).setNoPoints(F1obj.DriverStats.get(0).getNoPoints() + 10);
+        int Points [] = {25, 18, 15, 12, 10, 8, 6, 4, 2, 1};
+        for (int i = 0; i < F1obj.ListofRaces.size();i++){
+            newRace.getRaceDetails().get(i).setNoPoints(newRace.getRaceDetails().get(i).getNoPoints()+Points[i]); //doesnt work properly
+            newRace.getRaceDetails().get(i).setNoRaces(newRace.getRaceDetails().get(i).getNoRaces() + 1);
+            if (Points[i] == 25){
+                newRace.getRaceDetails().get(i).setNoFirst(newRace.getRaceDetails().get(i).getNoFirst() + 1);
+            } else if (Points[i] == 18){
+                newRace.getRaceDetails().get(i).setNoSecond(newRace.getRaceDetails().get(i).getNoSecond() + 1);
+            } else if (Points[i] == 15){
+                newRace.getRaceDetails().get(i).setNoThird(newRace.getRaceDetails().get(i).getNoThird() + 1);
+            }
+        }
+
     }
 
     public void displayNewRaceRetails(Races newRace, String title) {
@@ -383,7 +440,7 @@ public class GUI extends JFrame {
         raceTable.setModel(raceTableModel);
         raceTableModel.setRowCount(0);
 
-        //TODO sort race arraylist using date
+        sortRacebyDate();
 
         //Adding data to JTable
         for (int i = 0; i < F1obj.ListofRaces.size(); i++) {
@@ -404,6 +461,31 @@ public class GUI extends JFrame {
         raceTableFrame.add(panel4);
         raceTableFrame.add(raceTablePanel);
 
+    }
+    public void sortRacebyDate() {
+
+        Comparator<Races> comparator = new Comparator<Races>() {
+
+            public int compare(Races Race1, Races Race2) {
+                try {
+                    Date Date1 = new SimpleDateFormat("dd/MM/yyyy").parse(Race1.getDate());
+                    Date Date2 = new SimpleDateFormat("dd/MM/yyyy").parse(Race2.getDate());
+                    if (Date1.compareTo(Date2) > 0) {
+                        return 1;
+                    } else if (Date1.compareTo(Date2)< 0){
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    return 0;
+                }
+
+            }
+        };
+        F1obj.ListofRaces.sort(comparator);
     }
 }
 

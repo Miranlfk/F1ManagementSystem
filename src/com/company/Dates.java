@@ -2,7 +2,7 @@ package com.company;
 
 import java.util.GregorianCalendar;
 
-public class Date {
+public class Dates {
     public String getRandomDate() {
         GregorianCalendar gc = new GregorianCalendar();
         int year = randBetween(2021, 2025);
@@ -14,6 +14,9 @@ public class Date {
     public static int randBetween(int start, int end) {
         return start + (int)Math.round(Math.random() * (end - start));
     }
+
+
 }
+
 
 
