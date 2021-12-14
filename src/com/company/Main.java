@@ -9,9 +9,12 @@ public class Main {
 
         Scanner input = new Scanner(System.in);
         Formula1ChampionshipManager f1m = new Formula1ChampionshipManager();
-        f1m.readDetails();
+        f1m.readDetails(); //
 
-        System.out.println('\n' + "Welcome to the BRAIN DEAD SOCIETY" + '\n');
+    /*
+     * Menu Displayed to the User
+     */
+        System.out.println('\n' + "Welcome to the Formula1 CHAMPIONSHIP!" + '\n');
 
         System.out.println("Enter '1' to add a Driver");
         System.out.println("Enter '2' to remove a Driver");
@@ -29,24 +32,25 @@ public class Main {
             userInput = input.next();
             if (userInput.equals("1")) {
                 f1m.createDriver();
+
             } else if (userInput.equals("2")) {
                 f1m.removeDriver();
-                //
+
             } else if (userInput.equals("3")) {
-                f1m.changeTeamsDriver(); //ask kstar savior
-                //
+                f1m.changeTeamsDriver();
+
             } else if (userInput.equals("4")) {
                 f1m.displayDriverStat();
-                //
 
             } else if (userInput.equals("5")) {
                 f1m.displayAllDriversStats();
-                //
 
             } else if (userInput.equals("6")) {
                 f1m.addRace();
+
             } else if (userInput.equals("7")) {
                 f1m.saveDetails();
+
             } else if (userInput.equals("8")) {
                 f1m.showDetailsGUI();
             }

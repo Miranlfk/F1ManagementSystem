@@ -5,19 +5,29 @@ import java.util.*;
 
 public class Formula1ChampionshipManager implements ChampionshipManager{
 
-    public ArrayList<Formula1Driver> DriverStats  = new ArrayList<>();
+    ArrayList<Formula1Driver> DriverStats  = new ArrayList<>();
     ArrayList<Races> ListofRaces = new ArrayList<>();
     Scanner input = new Scanner(System.in);
 
     int Points [] = {0, 25, 18, 15, 12, 10, 8, 6, 4, 2, 1};
 
+    public Formula1ChampionshipManager(){}
+
+    /**
+     * Parametrized Constructor of Formula1ChampionshipManager Class
+     * @param DriverStats
+     * @param races
+     */
     public Formula1ChampionshipManager(ArrayList<Formula1Driver> DriverStats, ArrayList<Races> races) {
         this.DriverStats = DriverStats;
         this.ListofRaces = races;
     }
 
-    public Formula1ChampionshipManager(){}
-
+    /**
+     * Method used to create a driver
+     * Driver details obtained from user through prompts
+     * Driver details added to Formula1Driver Object which is then added to an Arraylist of Formula1Drivers
+     */
     @Override
     public void createDriver() {
 
@@ -51,9 +61,6 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
 
         }
 
-
-
-
         System.out.print("Enter number of races particpated by New Driver: ");
         int races = input.nextInt();
 
@@ -77,7 +84,6 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
             }
         }
 
-
         System.out.print("Enter new Driver's Points: ");
         int points = input.nextInt();
 
@@ -92,9 +98,12 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
         d1.setNoPoints(points);
         DriverStats.add(d1);
 
-
     }
 
+    /**
+     * Method used to Remove a Driver
+     * User is required to enter Team of Driver (as it is the unique attribute)
+     */
     @Override
     public void removeDriver() {
 
@@ -113,6 +122,11 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
 
     }
 
+    /**
+     * Method used to Change a Team's Driver
+     * User is required to enter Team of Driver (as it is the unique attribute)
+     * Once Team is located user is required to enter New Driver's Name and Location
+     */
     @Override
     public void changeTeamsDriver() {
 
@@ -140,6 +154,11 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
 
     }
 
+    /**
+     * Method used to Display a Specific Drivers Statistics
+     * User is required to enter Team of Driver (as it is the unique attribute)
+     * Once Team is located all the details of Driver is Displayed to the user
+     */
     @Override
     public void displayDriverStat() {
 
@@ -157,15 +176,16 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
                 }
             }
         }
-
-
-
     }
 
+    /**
+     * Method used to Display all the Drivers Statistics to the User
+     * Displays using a Table format on the Console
+     * Displays the details formatted by Points and Number of First Place Finishes
+     */
     @Override
     public void displayAllDriversStats() {
         Table details = new Table();
-        //details.setRightAlign(true);//if true then cell text is right aligned
         details.setShowVerticalLines(true);//if false (default) then no vertical lines are shown
         details.setHeaders("Name", "Team", "Country", "Points", "1st Places", "2nd Places", "3rd Places", "Number of Races");//optional - if not used then there will be no header and horizontal lines
         Collections.sort(DriverStats);
@@ -179,6 +199,11 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
 
     }
 
+    /**
+     * Method used to add a Race to Championship
+     * A loop is used to Individually update the drivers
+     * Details of the Race are added to an Arraylist of Races
+     */
     @Override
     public void addRace() {
         ArrayList<Formula1Driver> RaceDrivers = new ArrayList<>();
@@ -218,11 +243,14 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
         }
         Races race = new Races();
         race.setDate(raceDate);
-        race.setRaceDetails(RaceDrivers);
+        race.setRaceEDetails(RaceDrivers);
         ListofRaces.add(race);
 
     }
 
+    /**
+     * Method used to save the Details of Driver Statistics in the Championship into a Text Document
+     */
     @Override
     public void saveDetails() {
         try {
@@ -243,6 +271,10 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
 
     }
 
+    /**
+     * Method used to read the details from the Text Document
+     * The program is updated when program is Re-run
+     */
     @Override
     public void readDetails() {
         Scanner s = null;
@@ -274,8 +306,6 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
                     f1.setNoThird(Integer.parseInt(sepWords.get(6)));
                     f1.setNoRaces(Integer.parseInt(sepWords.get(7)));
 
-                    //assign words in sepWords to object f1 arryalist
-                    //assifn f1 to drivers arrylist[
                 }
                 DriverStats.add(f1);
 
@@ -289,6 +319,9 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
 
     }
 
+    /**
+     * Method used to display the Graphical User Interface to the User
+     */
     @Override
     public void showDetailsGUI() {
 

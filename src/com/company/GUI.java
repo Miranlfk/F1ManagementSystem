@@ -6,13 +6,23 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Array;
-import java.text.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Random;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -30,13 +40,19 @@ public class GUI extends JFrame {
     JPanel driverTablePanel;
     JPanel newRaceDetailsPanel;
     JPanel raceTablePanel;
+    JPanel driverRaceTablePanel;
+
     String[] Heading;
     JTable driverTable;
     JTable newRaceDetailsTable;
     JTable raceTable;
+    JTable driverRaceTable;
+
     DefaultTableModel driverTableModel;
     DefaultTableModel newRaceDetailsModel;
     DefaultTableModel raceTableModel;
+    DefaultTableModel driverRaceTableModel;
+
 
     Formula1ChampionshipManager F1obj;
 
@@ -52,33 +68,32 @@ public class GUI extends JFrame {
         raceTableFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         driverTableFrame.setSize(1000, 800);
-        driverTableFrame.setTitle("Formula1 Championship ");
+        driverTableFrame.setTitle("Formula 1 Championship ");
         driverTableFrame.setLayout(null);
         driverTableFrame.setVisible(true);
 
         //Setting up panels and tables for Frame 1
         panel1 = new JPanel();
-        panel1.setBackground(new Color(0x2E8BC0));
+        panel1.setBackground(new Color(0x000000));
         panel1.setBounds(0, 0, 1000, 250);
         panel1.setLayout(new BorderLayout());
 
         driverTablePanel = new JPanel();
-        driverTablePanel.setBackground(new Color(0x2E8BC0));
+        driverTablePanel.setBackground(new Color(0x000000));
         driverTablePanel.setBounds(0, 250, 1000, 400);
-        driverTablePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Driver Statistics", TitledBorder.CENTER, TitledBorder.TOP, Font.getFont("SANS_SERIF"), Color.getColor("0x75E6DA")));
+        driverTablePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Driver Statistics", TitledBorder.CENTER, TitledBorder.TOP, Font.getFont("Arial"), Color.getColor("0xFFFFFF")));
         driverTablePanel.setLayout(new BorderLayout());
 
         panel2 = new JPanel();
-        panel2.setBackground(new Color(0x2E8BC0));
+        panel2.setBackground(new Color(0x000000));
         panel2.setBounds(0, 650, 1000, 100);
         panel2.setLayout(new FlowLayout());
-        ImageIcon logo = new ImageIcon("logo.png");
 
-        JLabel label = new JLabel("Formula1 Championship 2021");
+
+        JLabel label = new JLabel("Formula 1 Championship 2021");
         label.setBounds(40, 50, 50, 70);
-        label.setFont(new Font("SANS_SERIF", Font.ITALIC | Font.BOLD, 40));
-        label.setForeground(new Color(0x0C2D48));
-        label.setIcon(logo);
+        label.setFont(new Font("Arial", Font.ITALIC | Font.BOLD, 40));
+        label.setForeground(new Color(0xFFFFFF));
         label.setHorizontalTextPosition(JLabel.CENTER);
         label.setVerticalTextPosition(JLabel.TOP);
         label.setVerticalAlignment(JLabel.TOP);
@@ -89,9 +104,6 @@ public class GUI extends JFrame {
 
         //displays the driver driverTable
         displayDriverTable();
-        driverTableFrame.revalidate();
-        driverTableFrame.repaint();
-
 
         //driver driverTable sort buttons
         addSortPointButton();
@@ -103,7 +115,7 @@ public class GUI extends JFrame {
 
         // setting up addNewRaceFrame to add a race
         addNewRaceFrame.setSize(1000, 900);
-        addNewRaceFrame.setTitle("Formula1 Championship New Race");
+        addNewRaceFrame.setTitle("Formula 1 Championship New Race");
         addNewRaceFrame.setLayout(null);
         addNewRaceFrame.setVisible(false);
 
@@ -113,7 +125,7 @@ public class GUI extends JFrame {
         addStatRaceButton();
 
         raceTableFrame.setSize(1000, 900);
-        raceTableFrame.setTitle("Formula1 Championship Race Table");
+        raceTableFrame.setTitle("Formula 1 Championship Race Table");
         raceTableFrame.setLayout(null);
         raceTableFrame.setVisible(false);
         //button displays new frame with table of races and searchbar
@@ -123,7 +135,7 @@ public class GUI extends JFrame {
     //displays the driver driverTable
     public void displayDriverTable() {
         //JTable Column
-        Heading = new String[]{"NAME OF DRIVER", "Team Name", "Location", "First Positions", "Second Positions", "Third Positions", "Total Points", "Number Of Participated Races"};
+        Heading = new String[]{"Name of Driver", "Team Name", "Location", "First Positions", "Second Positions", "Third Positions", "Total Points", "Number Of Participated Races"};
 
         driverTableModel = new DefaultTableModel(0, 0);
         driverTable = new JTable(driverTableModel);
@@ -137,8 +149,6 @@ public class GUI extends JFrame {
         JScrollPane sp1 = new JScrollPane(driverTable);
         sp1.setBounds(0, 250, 1000, 400);
         driverTablePanel.add(sp1);
-
-
     }
 
     //button that sort according to ascending on points
@@ -208,7 +218,6 @@ public class GUI extends JFrame {
                     F1obj.DriverStats.get(x).getNoRaces()
             };
             driverTableModel.addRow(data);
-            driverTableFrame.repaint();
         }
     }
 
@@ -255,13 +264,28 @@ public class GUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String getValue = textField.getText();
-                drawRaceTable(getValue);
+                if (getValue!=null && !getValue.isEmpty()) {
+                    raceTableFrame.remove(raceTablePanel);
+                    //raceTableFrame.repaint();
+                    drawDriverRaceTable(getValue);
+                }
                 textField.setText("");
+            }
+        });
+
+        JButton resetButton = new JButton("Reset");
+        resetButton.setBounds(250, 20, 40, 15);
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                raceTableFrame.remove(driverRaceTablePanel);
+                //raceTableFrame.repaint();
+                drawRaceTable();
             }
         });
         panel5.add(textField);
         panel5.add(searchButton);
-
+        panel5.add(resetButton);
     }
 
     public String getRaceName(){
@@ -279,8 +303,8 @@ public class GUI extends JFrame {
         ArrayList<Formula1Driver> endingPositions = new ArrayList<>(F1obj.DriverStats);
         Collections.shuffle(startingPositions);
         Collections.shuffle(endingPositions);
-        newRace.setRacePositions(startingPositions);
-        newRace.setRaceDetails(endingPositions);
+        newRace.setRaceSPositions(startingPositions);
+        newRace.setRaceEDetails(endingPositions);
         return newRace;
     }
 
@@ -319,7 +343,6 @@ public class GUI extends JFrame {
             winningPosition = F1obj.DriverStats.size();
         }
         Formula1Driver Driver1 = startingPositions.get(winningPosition-1);
-        System.out.println(Driver1.getName());
         for (int i = 0 ; i < endingPositionsTemp.size(); i++){
             if (endingPositionsTemp.get(i).getTeam().equals(Driver1.getTeam())){
                 endingPositionsTemp.remove(i);
@@ -328,49 +351,54 @@ public class GUI extends JFrame {
         ArrayList<Formula1Driver> endingPositionsFinal = new ArrayList<>();
         endingPositionsFinal.add(Driver1);
         endingPositionsFinal.addAll(endingPositionsTemp);
-        newRace.setRacePositions(startingPositions);
-        newRace.setRaceDetails(endingPositionsFinal);
+        newRace.setRaceSPositions(startingPositions);
+        newRace.setRaceEDetails(endingPositionsFinal);
 
         return newRace;
     }
 
     //TODO complete function to update the DriverList using new race
     public void updateDriverDetails(Races newRace) {
-        // Example code:
         int Points [] = {25, 18, 15, 12, 10, 8, 6, 4, 2, 1};
-        for (int i = 0; i < F1obj.ListofRaces.size();i++){
-            newRace.getRaceDetails().get(i).setNoPoints(newRace.getRaceDetails().get(i).getNoPoints()+Points[i]); //doesnt work properly
-            newRace.getRaceDetails().get(i).setNoRaces(newRace.getRaceDetails().get(i).getNoRaces() + 1);
-            if (Points[i] == 25){
-                newRace.getRaceDetails().get(i).setNoFirst(newRace.getRaceDetails().get(i).getNoFirst() + 1);
-            } else if (Points[i] == 18){
-                newRace.getRaceDetails().get(i).setNoSecond(newRace.getRaceDetails().get(i).getNoSecond() + 1);
-            } else if (Points[i] == 15){
-                newRace.getRaceDetails().get(i).setNoThird(newRace.getRaceDetails().get(i).getNoThird() + 1);
+        for (int i=0; i<newRace.RaceEDetails.size(); i++) {
+            Formula1Driver d1 = newRace.RaceEDetails.get(i);
+            for (int j=0; j<F1obj.DriverStats.size(); j++) {
+                Formula1Driver d2 = F1obj.DriverStats.get(j);
+                if (d1.getTeam().equals(d2.getTeam())) {
+                    d2.setNoRaces(d2.getNoRaces()+1);
+                    d2.setNoPoints(d2.getNoPoints()+Points[i]);
+                    if (i == 0) {
+                        d2.setNoFirst(d2.getNoFirst()+1);
+                    } else if (i == 1) {
+                        d2.setNoSecond(d2.getNoSecond()+1);
+                    } else if (i == 2) {
+                        d2.setNoThird(d2.getNoThird()+1);
+                    }
+                    F1obj.DriverStats.set(j, d2);
+                }
             }
         }
-
     }
 
     public void displayNewRaceRetails(Races newRace, String title) {
         addNewRaceFrame.setVisible(true);
         panel3 = new JPanel();
-        panel3.setBackground(new Color(0x2E8BC0));
-        panel3.setBounds(0, 650, 1000, 100);
+        panel3.setBackground(new Color(0x000000));
+        panel3.setBounds(0, 0, 1000, 250);
         panel3.setLayout(new FlowLayout());
 
         newRaceDetailsPanel = new JPanel();
-        newRaceDetailsPanel.setBackground(new Color(0x2E8BC0));
+        newRaceDetailsPanel.setBackground(new Color(0x000000));
         newRaceDetailsPanel.setBounds(0, 250, 1000, 400);
-        newRaceDetailsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Driver Statistics", TitledBorder.CENTER, TitledBorder.TOP, Font.getFont("SANS_SERIF"), Color.getColor("0x75E6DA")));
+        newRaceDetailsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Driver Statistics", TitledBorder.CENTER, TitledBorder.TOP, Font.getFont("Arial"), Color.getColor("0xFFFFFF")));
         newRaceDetailsPanel.setLayout(new BorderLayout());
 
         // TODO format labels
         // TODO put new label title to show title of page(use title variable)
         JLabel label = new JLabel("Race Name: " + newRace.getName() + "  Date: " + newRace.getDate());
         label.setBounds(40, 50, 50, 70);
-        label.setFont(new Font("SANS_SERIF", Font.ITALIC | Font.BOLD, 40));
-        label.setForeground(new Color(0x0C2D48));
+        label.setFont(new Font("Arial", Font.ITALIC | Font.BOLD, 40));
+        label.setForeground(new Color(0xFFFFFF));
         label.setHorizontalTextPosition(JLabel.CENTER);
         label.setVerticalTextPosition(JLabel.TOP);
         label.setVerticalAlignment(JLabel.TOP);
@@ -388,8 +416,8 @@ public class GUI extends JFrame {
         //array list to store the ending positions using starting positions of a driver
         ArrayList<String> endingPos = new ArrayList<>();
         for (int i = 0; i < newRace.getRacePositions().size(); i++) {
-            for (int j = 0; j < newRace.getRaceDetails().size(); j++) {
-                if (newRace.getRacePositions().get(i).getTeam().equals(newRace.getRaceDetails().get(j).getTeam())) {
+            for (int j = 0; j < newRace.getRaceEDetails().size(); j++) {
+                if (newRace.getRacePositions().get(i).getTeam().equals(newRace.getRaceEDetails().get(j).getTeam())) {
                     endingPos.add(Integer.toString(j + 1));
                 }
             }
@@ -413,7 +441,6 @@ public class GUI extends JFrame {
         panel3.add(label);
         addNewRaceFrame.add(panel3);
         addNewRaceFrame.add(newRaceDetailsPanel);
-
     }
 
     public void addViewRaceTableButton() {
@@ -428,82 +455,83 @@ public class GUI extends JFrame {
         panel2.add(viewRaceTableButton);
     }
 
-    public void drawRaceTable(String searchName) {
+    public void drawDriverRaceTable(String searchName) {
         ArrayList<Races> tempRaces = new ArrayList<>(F1obj.ListofRaces);
-        ArrayList<Races> searchRaces = new ArrayList<>();
         ArrayList<RaceDrivers> raceDrivers = new ArrayList<>();
+        for (Races r: tempRaces) {
+            ArrayList<Formula1Driver> driverSearch = r.getRaceEDetails();
+            for (Formula1Driver d: driverSearch){
+                if (d.getName().contains(searchName)){
+                    RaceDrivers rd =new RaceDrivers();
+                    rd.setDriverName(d.getName());
+                    rd.setRaceDate(r.getDate());
+                    rd.setRaceName(r.getName());
+                    rd.setStartPosition(r.getRacePositions().indexOf(d)+1);
+                    rd.setEndPosition(r.getRaceEDetails().indexOf(d)+1);
+                    raceDrivers.add(rd);
 
-        if (!(searchName==null || searchName.isEmpty())) {
-            for (Races r: tempRaces) {
-                ArrayList<Formula1Driver> driverSearch = r.getRaceDetails();
-                for (Formula1Driver d: driverSearch){
-                    if (d.getName().contains(searchName)){
-                        RaceDrivers rd =new RaceDrivers();
-                        rd.setDriverName(d.getName());
-                        rd.setRaceDate(r.getDate());
-                        rd.setRaceName(r.getName());
-                        rd.setStartPosition(r.getRacePositions().indexOf(d));
-                        rd.setEndPosition(r.getRaceDetails().indexOf(d));
-                        raceDrivers.add(rd);
-
-                    }
                 }
             }
-            Heading = new String[]{"Driver Name", "Race Name", "Race Date", "Starting Position", "Ending Position"};
-            raceTableModel.setRowCount(0);
-
-            for (int i = 0; i < raceDrivers.size(); i++) {
-                Object[] data = new Object[]{
-                        raceDrivers.get(i).getDriverName(),
-                        raceDrivers.get(i).getRaceName(),
-                        raceDrivers.get(i).getRaceDate(),
-                        raceDrivers.get(i).getStartPosition(),
-                        raceDrivers.get(i).getEndPosition()
-
-                };
-                raceTableModel.addRow(data);
-            }
-
-        } else {
-            Heading = new String[]{"Race Name", "Race Date", "Number of Drivers"};
-            searchRaces = new ArrayList<>(F1obj.ListofRaces);
-
-            //sort searchRaces arraylist by Date
-            Comparator<Races> comparator = sortRacebyDate();
-            searchRaces.sort(comparator);
-            raceTableModel.setRowCount(0);
-
-            for (int i = 0; i < searchRaces.size(); i++) {
-                Object[] data = new Object[]{
-                        searchRaces.get(i).getName(),
-                        searchRaces.get(i).getDate(),
-                        searchRaces.get(i).getRaceDetails().size()
-
-                };
-                raceTableModel.addRow(data);
-            }
-
-
         }
+        driverRaceTableModel.setRowCount(0);
+        for (int i = 0; i < raceDrivers.size(); i++) {
+            Object[] data = new Object[]{
+                    raceDrivers.get(i).getDriverName(),
+                    raceDrivers.get(i).getRaceName(),
+                    raceDrivers.get(i).getRaceDate(),
+                    raceDrivers.get(i).getStartPosition(),
+                    raceDrivers.get(i).getEndPosition()
 
+            };
+            driverRaceTableModel.addRow(data);
+        }
+        raceTablePanel.setVisible(false);
+        driverRaceTablePanel.setVisible(true);
+        raceTableFrame.remove(raceTablePanel);
+        raceTableFrame.add(driverRaceTablePanel);
+        raceTableFrame.revalidate();
+        raceTableFrame.repaint();
+    }
 
+    public void drawRaceTable() {
+        raceTableModel.setRowCount(0);
+        for (int i = 0; i < F1obj.ListofRaces.size(); i++) {
+            Object[] data = new Object[]{
+                    F1obj.ListofRaces.get(i).getName(),
+                    F1obj.ListofRaces.get(i).getDate(),
+                    F1obj.ListofRaces.get(i).getRaceEDetails().size()
+            };
+            raceTableModel.addRow(data);
+        }
+        driverRaceTablePanel.setVisible(false);
+        raceTablePanel.setVisible(true);
+        raceTableFrame.remove(driverRaceTablePanel);
+        raceTableFrame.add(raceTablePanel);
+        raceTableFrame.revalidate();
+        raceTableFrame.repaint();
     }
 
     public void viewRaceTableFrame() {
         raceTableFrame.setVisible(true);
         panel4 = new JPanel();
-        panel4.setBackground(new Color(0x2E8BC0));
+        panel4.setBackground(new Color(0x000000));
         panel4.setBounds(0, 0, 1000, 250);
         panel4.setLayout(new FlowLayout());
 
         raceTablePanel = new JPanel();
-        raceTablePanel.setBackground(new Color(0x2E8BC0));
+        raceTablePanel.setBackground(new Color(0x000000));
         raceTablePanel.setBounds(0, 250, 1000, 400);
-        raceTablePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Driver Statistics", TitledBorder.CENTER, TitledBorder.TOP, Font.getFont("SANS_SERIF"), Color.getColor("0x75E6DA")));
+        raceTablePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Race Statistics", TitledBorder.CENTER, TitledBorder.TOP, Font.getFont("Arial"), Color.getColor("0xFFFFFF")));
         raceTablePanel.setLayout(new BorderLayout());
 
+        driverRaceTablePanel = new JPanel();
+        driverRaceTablePanel.setBackground(new Color(0x000000));
+        driverRaceTablePanel.setBounds(0, 250, 1000, 400);
+        driverRaceTablePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Driver Search", TitledBorder.CENTER, TitledBorder.TOP, Font.getFont("Arial"), Color.getColor("0xFFFFFF")));
+        driverRaceTablePanel.setLayout(new BorderLayout());
+
         panel5 = new JPanel();
-        panel5.setBackground(new Color(0x2E8BC0));
+        panel5.setBackground(new Color(0x000000));
         panel5.setBounds(0, 650, 1000, 100);
         panel5.setLayout(new FlowLayout());
 
@@ -512,8 +540,8 @@ public class GUI extends JFrame {
         // TODO format labels
         JLabel label = new JLabel("View Race Details");
         label.setBounds(40, 50, 50, 70);
-        label.setFont(new Font("SANS_SERIF", Font.ITALIC | Font.BOLD, 40));
-        label.setForeground(new Color(0x0C2D48));
+        label.setFont(new Font("Arial", Font.ITALIC | Font.BOLD, 40));
+        label.setForeground(new Color(0xFFFFFF));
         label.setHorizontalTextPosition(JLabel.CENTER);
         label.setVerticalTextPosition(JLabel.TOP);
         label.setVerticalAlignment(JLabel.TOP);
@@ -521,12 +549,27 @@ public class GUI extends JFrame {
         label.setIconTextGap(-200);
 
         //JTable Column
+        Heading = new String[]{"Race Name", "Race Date", "Number of Drivers"};
         raceTableModel = new DefaultTableModel(0, 0);
         raceTable = new JTable(raceTableModel);
         raceTableModel.setColumnIdentifiers(Heading);
         raceTable.setModel(raceTableModel);
 
-        drawRaceTable("");
+        String[] raceTableHeading = new String[]{"Race Name", "Race Date", "Number of Drivers"};
+        raceTableModel = new DefaultTableModel(0, 0);
+        raceTable = new JTable(raceTableModel);
+        raceTableModel.setColumnIdentifiers(raceTableHeading);
+        raceTable.setModel(raceTableModel);
+
+        String[] driverRaceTableHeading = new String[]{"Driver Name", "Race Name", "Race Date", "Starting Position", "Ending Position"};
+        driverRaceTableModel = new DefaultTableModel(0, 0);
+        driverRaceTable = new JTable(driverRaceTableModel);
+        driverRaceTableModel.setColumnIdentifiers(driverRaceTableHeading);
+        driverRaceTable.setModel(driverRaceTableModel);
+
+        Comparator<Races> comparator = sortRacebyDate();
+        F1obj.ListofRaces.sort(comparator);
+        drawRaceTable();
 
         raceTable.setBounds(0, 250, 1000, 400);
         raceTable.setOpaque(true);
@@ -534,16 +577,20 @@ public class GUI extends JFrame {
         sp3.setBounds(0, 250, 1000, 400);
         raceTablePanel.add(sp3);
 
+        driverRaceTable.setBounds(0, 250, 1000, 400);
+        driverRaceTable.setOpaque(true);
+        JScrollPane sp4 = new JScrollPane(driverRaceTable);
+        sp4.setBounds(0, 250, 1000, 400);
+        driverRaceTablePanel.add(sp4);
+
         panel4.add(label);
         raceTableFrame.add(panel4);
-        raceTableFrame.add(raceTablePanel);
+        //raceTableFrame.add(raceTablePanel);
         raceTableFrame.add(panel5);
-
     }
+
     public Comparator<Races> sortRacebyDate() {
-
         Comparator<Races> comparator = new Comparator<Races>() {
-
             public int compare(Races Race1, Races Race2) {
                 try {
                     Date Date1 = new SimpleDateFormat("dd/MM/yyyy").parse(Race1.getDate());
@@ -567,6 +614,10 @@ public class GUI extends JFrame {
     }
 
 }
+
+
+
+
 
 
 
