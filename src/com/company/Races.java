@@ -35,6 +35,7 @@ public class Races {
         this.name = name;
     }
 
+    //end pos
     public ArrayList<Formula1Driver> getRaceDetails() {
         return RaceDetails;
     }
@@ -43,6 +44,7 @@ public class Races {
         RaceDetails = raceDetails;
     }
 
+    //start pos
     public ArrayList<Formula1Driver> getRacePositions() {
         return RacePositions;
     }
