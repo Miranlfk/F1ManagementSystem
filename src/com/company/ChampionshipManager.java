@@ -2,18 +2,14 @@ package com.company;
 
 public interface ChampionshipManager {
 
-
-    void createDriver();
-    void removeDriver();
-    void changeTeamsDriver();
-    void displayDriverStat();
-    void displayAllDriversStats();
-    void addRace();
+    void createNewDriver();
+    void removeADriver();
+    void changeTeamDriver();
+    void displaySpecificDriversStatistics();
+    void displayAllDriversStatistics();
+    void addARace();
     void saveDetails();
     void readDetails();
-    void showDetailsGUI();
-
-
-
+    void showGUI();
 
 }

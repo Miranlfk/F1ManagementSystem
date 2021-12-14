@@ -4,7 +4,7 @@ import java.util.*;
 
 
 /**
- * A console Table format was found using the link below
+ * A console Table format was a direct reference from the link below
  * https://www.logicbig.com/how-to/code-snippets/jcode-java-cmd-command-line-table.html
  */
 

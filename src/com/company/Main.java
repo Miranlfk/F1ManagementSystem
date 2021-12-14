@@ -8,58 +8,57 @@ public class Main {
 
 
         Scanner input = new Scanner(System.in);
-        Formula1ChampionshipManager f1m = new Formula1ChampionshipManager();
-        f1m.readDetails(); //
+        Formula1ChampionshipManager f1manager = new Formula1ChampionshipManager();
+        f1manager.readDetails();
 
     /*
      * Menu Displayed to the User
      */
         System.out.println('\n' + "Welcome to the Formula1 CHAMPIONSHIP!" + '\n');
 
-        System.out.println("Enter '1' to add a Driver");
+        System.out.println("Enter '1' to add a New Driver");
         System.out.println("Enter '2' to remove a Driver");
         System.out.println("Enter '3' to change a Team's Driver");
         System.out.println("Enter '4' to display Statistics of a Specific Driver");
         System.out.println("Enter '5' to display Statistics of All Drivers");
         System.out.println("Enter '6' to add a Race");
-        System.out.println("Enter '7' to store program data into a file");
-        System.out.println("Enter '8' to access the GUI");
-        System.out.println("Enter '0' to exit the program" );
+        System.out.println("Enter '7' to Store program data into a Text file");
+        System.out.println("Enter '8' to access the Graphical User Interface");
+        System.out.println("Enter '0' to Exit the program" );
 
-        String userInput;
+        String userInputValue;
         do {
             System.out.print( '\n' + "Enter the value: ");
-            userInput = input.next();
-            if (userInput.equals("1")) {
-                f1m.createDriver();
+            userInputValue = input.next();
+            if (userInputValue.equals("1")) {
+                f1manager.createNewDriver();
 
-            } else if (userInput.equals("2")) {
-                f1m.removeDriver();
+            } else if (userInputValue.equals("2")) {
+                f1manager.removeADriver();
 
-            } else if (userInput.equals("3")) {
-                f1m.changeTeamsDriver();
+            } else if (userInputValue.equals("3")) {
+                f1manager.changeTeamDriver();
 
-            } else if (userInput.equals("4")) {
-                f1m.displayDriverStat();
+            } else if (userInputValue.equals("4")) {
+                f1manager.displaySpecificDriversStatistics();
 
-            } else if (userInput.equals("5")) {
-                f1m.displayAllDriversStats();
+            } else if (userInputValue.equals("5")) {
+                f1manager.displayAllDriversStatistics();
 
-            } else if (userInput.equals("6")) {
-                f1m.addRace();
+            } else if (userInputValue.equals("6")) {
+                f1manager.addARace();
 
-            } else if (userInput.equals("7")) {
-                f1m.saveDetails();
+            } else if (userInputValue.equals("7")) {
+                f1manager.saveDetails();
 
-            } else if (userInput.equals("8")) {
-                f1m.showDetailsGUI();
+            } else if (userInputValue.equals("8")) {
+                f1manager.showGUI();
             }
 
 
-        } while (!(userInput.equals("0")));
+        } while (!(userInputValue.equals("0")));
 
     }
-
 
 }
 

@@ -7,8 +7,8 @@ public class Races {
     private String name;
     private String date;
 
-    ArrayList<Formula1Driver> RaceSPositions = new ArrayList<>();
-    ArrayList<Formula1Driver> RaceEDetails = new ArrayList<>();
+    ArrayList<Formula1Driver> RaceStartPositions = new ArrayList<>();
+    ArrayList<Formula1Driver> RaceEndPositions = new ArrayList<>();
 
     public Races() {}
 
@@ -16,14 +16,14 @@ public class Races {
      * Parameterised Constructor for the Races Class
      * @param name
      * @param date
-     * @param racePositions
-     * @param raceEDetails
+     * @param raceStartPositions
+     * @param raceEndPositions
      */
-    public Races(String name, String date, ArrayList<Formula1Driver> racePositions, ArrayList<Formula1Driver> raceEDetails) {
+    public Races(String name, String date, ArrayList<Formula1Driver> raceStartPositions, ArrayList<Formula1Driver> raceEndPositions) {
         this.name = name;
         this.date = date;
-        RaceSPositions = racePositions;
-        RaceEDetails = raceEDetails;
+        RaceStartPositions = raceStartPositions;
+        RaceEndPositions = raceEndPositions;
     }
 
     /**
@@ -63,33 +63,32 @@ public class Races {
      * @return
      */
     public ArrayList<Formula1Driver> getRacePositions() {
-        return RaceSPositions;
+        return RaceStartPositions;
     }
 
     /**
      * Setter method to set the starting postions of the driver in a race using Arraylist parameter
-     * @param racePositions
+     * @param raceStartPositions
      */
-    public void setRaceSPositions(ArrayList<Formula1Driver> racePositions) {
-        RaceSPositions = racePositions;
+    public void setRaceStartPositions(ArrayList<Formula1Driver> raceStartPositions) {
+        RaceStartPositions = raceStartPositions;
     }
 
     /**
      * Getter method to obtain the Arraylist of the Ending postions of the drivers in a Race
      * @return
      */
-    public ArrayList<Formula1Driver> getRaceEDetails() {
-        return RaceEDetails;
+    public ArrayList<Formula1Driver> getRaceEndPositions() {
+        return RaceEndPositions;
     }
 
     /**
      * Setter method to set the ending postions of the driver in a race using Arraylist parameter
-     * @param raceEDetails
+     * @param raceEndPositions
      */
-    public void setRaceEDetails(ArrayList<Formula1Driver> raceEDetails) {
-        RaceEDetails = raceEDetails;
+    public void setRaceEndPositions(ArrayList<Formula1Driver> raceEndPositions) {
+        RaceEndPositions = raceEndPositions;
     }
-
 
 
 

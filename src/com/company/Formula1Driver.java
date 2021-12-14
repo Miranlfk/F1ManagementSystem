@@ -2,11 +2,11 @@ package com.company;
 
 public class Formula1Driver extends Driver {
 
-    private int noFirst;
-    private int noSecond;
-    private int noThird;
-    private int noRaces;
-    private int noPoints;
+    private int numFirst;
+    private int numSecond;
+    private int numThird;
+    private int numRaces;
+    private int numPoints;
 
     public  Formula1Driver(){}
 
@@ -15,100 +15,100 @@ public class Formula1Driver extends Driver {
      * @param name
      * @param location
      * @param team
-     * @param noFirst
-     * @param noSecond
-     * @param noThird
-     * @param noRaces
-     * @param noPoints
+     * @param numFirst
+     * @param numSecond
+     * @param numThird
+     * @param numRaces
+     * @param numPoints
      */
-    public Formula1Driver(String name, String location, String team, int noFirst, int noSecond, int noThird,
-                          int noRaces, int noPoints) {
+    public Formula1Driver(String name, String location, String team, int numFirst, int numSecond, int numThird,
+                          int numRaces, int numPoints) {
         super(name, location, team);
-        this.noFirst = noFirst;
-        this.noSecond = noSecond;
-        this.noThird = noThird;
-        this.noRaces = noRaces;
-        this.noPoints = noPoints;
+        this.numFirst = numFirst;
+        this.numSecond = numSecond;
+        this.numThird = numThird;
+        this.numRaces = numRaces;
+        this.numPoints = numPoints;
     }
 
     /**
      * Getter method to obtain the Number of First Place finishes of the Driver
      * @return
      */
-    public int getNoFirst() {
-        return noFirst;
+    public int getNumOfFirst() {
+        return numFirst;
     }
 
     /**
      * Setter method to set the number of first place finishes of the driver using Integer parameter
-     * @param noFirst
+     * @param numFirst
      */
-    public void setNoFirst(int noFirst) {
-        this.noFirst = noFirst;
+    public void setNumOfFirst(int numFirst) {
+        this.numFirst = numFirst;
     }
 
     /**
      * Getter method to obtain the Number of Second Place finishes of the Driver
      * @return
      */
-    public int getNoSecond() {
-        return noSecond;
+    public int getNumOfSecond() {
+        return numSecond;
     }
 
     /**
      * Setter method to set the number of second place finishes of the driver using Integer parameter
-     * @param noSecond
+     * @param numSecond
      */
-    public void setNoSecond(int noSecond) {
-        this.noSecond = noSecond;
+    public void setNumOfSecond(int numSecond) {
+        this.numSecond = numSecond;
     }
 
     /**
      * Getter method to obtain the Number of Third Place finishes of the Driver
      * @return
      */
-    public int getNoThird() {
-        return noThird;
+    public int getNumOfThird() {
+        return numThird;
     }
 
     /**
      * Setter method to set the number of third place finishes of the driver using Integer parameter
-     * @param noThird
+     * @param numThird
      */
-    public void setNoThird(int noThird) {
-        this.noThird = noThird;
+    public void setNumOfThird(int numThird) {
+        this.numThird = numThird;
     }
 
     /**
      * Getter method to obtain the Number of Races the Driver participated in
      * @return
      */
-    public int getNoRaces() {
-        return noRaces;
+    public int getNumOfRaces() {
+        return numRaces;
     }
 
     /**
      * Setter method to set the number of races the driver participated in using Integer parameter
-     * @param noRaces
+     * @param numRaces
      */
-    public void setNoRaces(int noRaces) {
-        this.noRaces = noRaces;
+    public void setNumOfRaces(int numRaces) {
+        this.numRaces = numRaces;
     }
 
     /**
      * Getter method to obtain the Number of Points of the Driver
      * @return
      */
-    public int getNoPoints() {
-        return noPoints;
+    public int getNumOfPoints() {
+        return numPoints;
     }
 
     /**
      * Setter method to set the number of points of the driver using Integer parameter
-     * @param noPoints
+     * @param numPoints
      */
-    public void setNoPoints(int noPoints) {
-        this.noPoints = noPoints;
+    public void setNumOfPoints(int numPoints) {
+        this.numPoints = numPoints;
     }
 
     /**
@@ -119,12 +119,12 @@ public class Formula1Driver extends Driver {
      */
     @Override
     public int compareTo(Object o) {
-        int oldPP=((Formula1Driver)o).getNoPoints();
+        int oldPoints=((Formula1Driver)o).getNumOfPoints();
 
-        if (oldPP == this.noPoints){
-            int num1PP = ((Formula1Driver)o).getNoFirst();
-            return num1PP - this.noFirst;
+        if (oldPoints == this.numPoints){
+            int num1stPos = ((Formula1Driver)o).getNumOfFirst();
+            return num1stPos - this.numFirst;
         }
-        return oldPP-this.noPoints;
+        return oldPoints-this.numPoints;
     }
 }

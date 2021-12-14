@@ -1,6 +1,6 @@
 package com.company;
 
-public class RaceDrivers {
+public class DriversnRaces {
     String raceName;
     String raceDate;
     String driverName;
