@@ -263,7 +263,7 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
     public void saveDetailstoTxt() {
         try {
 
-            FileWriter championshipfile = new FileWriter("Championship.txt");
+            FileWriter championshipfile = new FileWriter("F1Championship.txt");
 
             for (int i=0; i < DriverStatistics.size(); i++){
                 Formula1Driver f1 = DriverStatistics.get(i);
@@ -273,7 +273,7 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
                         + ", Number of Races: " + f1.getNumOfRaces() + '\n');
             }
             championshipfile.close();
-            System.out.println("Championship.txt has been created!");
+            System.out.println("F1Championship.txt has been created!");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -288,7 +288,7 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
     public void readDetailsfromTxt() {
         Scanner sc = null;
         try {
-            sc = new Scanner(new File("Championship.txt"));
+            sc = new Scanner(new File("F1Championship.txt"));
 
             while (sc.hasNext()){
 
