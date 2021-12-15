@@ -31,7 +31,7 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
     @Override
     public void createNewDriver() {
 
-        boolean raceDetail = false, teamexist = false;
+        boolean raceDetail = false, teamExist = false;
         int no1s = 0, no2s = 0, no3s = 0;
         String teams = " ";
 
@@ -41,7 +41,7 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
         System.out.print("Enter new Driver's Location: ");
         String location = input.next();
 
-        while (!teamexist){
+        while (!teamExist){
             int count = 0;
             System.out.print("Enter new Driver's Team: ");
             teams = input.next();
@@ -53,14 +53,14 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
                         System.out.println("ERROR! Team Already exists, Re-Enter the Team Name");
 
                     }else {
-                        teamexist = true;
+                        teamExist = true;
                     }
                 }
                 if (count>0){
-                    teamexist = false;
+                    teamExist = false;
                 }
             } else{
-                teamexist = true;
+                teamExist = true;
             }
 
 
@@ -173,8 +173,9 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
             for (int i=0; i < DriverStatistics.size(); i++) {
                 Formula1Driver formula1 = DriverStatistics.get(i);
                 if (teams.equalsIgnoreCase(formula1.getTeam())){
-                    System.out.println("Driver Name: " + formula1.getName() + '\n' + "Team: " + formula1.getTeam() + '\n' + "Country: " + formula1.getLocation() + '\n' +"Points: " + formula1.getNumOfPoints()
-                            + '\n' + "Number of 1st Place: " + formula1.getNumOfFirst() + '\n' + "Number of 2nd Place: " + formula1.getNumOfSecond() + '\n' + "Number of 3rd Place: " + formula1.getNumOfThird()
+                    System.out.println("Driver Name: " + formula1.getName() + '\n' + "Team: " + formula1.getTeam() + '\n' + "Country: " + formula1.getLocation() + '\n'
+                            +"Points: " + formula1.getNumOfPoints() + '\n' + "Number of 1st Place: " + formula1.getNumOfFirst() + '\n' + "Number of 2nd Place: "
+                            + formula1.getNumOfSecond() + '\n' + "Number of 3rd Place: " + formula1.getNumOfThird()
                             + '\n' + "Number of Races: " + formula1.getNumOfRaces());
                     driverExists = true;
                 }
@@ -196,7 +197,8 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
         for (int i=0; i < DriverStatistics.size(); i++){
             Formula1Driver formula1 = DriverStatistics.get(i);
             F1ChampionshipTable.addRow(String.valueOf(formula1.getName()), String.valueOf(formula1.getTeam()), String.valueOf(formula1.getLocation()),
-                    String.valueOf(formula1.getNumOfPoints()), String.valueOf(formula1.getNumOfFirst()), String.valueOf(formula1.getNumOfSecond()), String.valueOf(formula1.getNumOfThird()),
+                    String.valueOf(formula1.getNumOfPoints()), String.valueOf(formula1.getNumOfFirst()),
+                    String.valueOf(formula1.getNumOfSecond()), String.valueOf(formula1.getNumOfThird()),
                     String.valueOf(formula1.getNumOfRaces()));
         }
 
@@ -258,15 +260,16 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
      * Method used to save the Details of Driver Statistics in the Championship into a Text Document
      */
     @Override
-    public void saveDetails() {
+    public void saveDetailstoTxt() {
         try {
 
             FileWriter championshipfile = new FileWriter("Championship.txt");
 
             for (int i=0; i < DriverStatistics.size(); i++){
                 Formula1Driver f1 = DriverStatistics.get(i);
-                championshipfile.write("Driver Name: " + f1.getName() + ", Team: " + f1.getTeam() + ", Country: " + f1.getLocation() + ", Points: " + f1.getNumOfPoints()
-                        + ", Number of 1st Place: " + f1.getNumOfFirst() + ", Number of 2nd Place: " + f1.getNumOfSecond() + ", Number of 3rd Place: " + f1.getNumOfThird()
+                championshipfile.write("Driver Name: " + f1.getName() + ", Team: " + f1.getTeam() + ", Country: " +
+                        f1.getLocation() + ", Points: " + f1.getNumOfPoints()+ ", Number of 1st Place: " + f1.getNumOfFirst()
+                        + ", Number of 2nd Place: " + f1.getNumOfSecond() + ", Number of 3rd Place: " + f1.getNumOfThird()
                         + ", Number of Races: " + f1.getNumOfRaces() + '\n');
             }
             championshipfile.close();
@@ -282,7 +285,7 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
      * The program is updated when program is Re-run
      */
     @Override
-    public void readDetails() {
+    public void readDetailsfromTxt() {
         Scanner sc = null;
         try {
             sc = new Scanner(new File("Championship.txt"));
@@ -300,20 +303,20 @@ public class Formula1ChampionshipManager implements ChampionshipManager{
                 newLine = newLine.replace("Number of Races:","");
                 newLine = newLine.replace(" ","");
                 ArrayList<String> seperatedWords = new ArrayList<String>(Arrays.asList(newLine.split(",")));
-                Formula1Driver f1 = new Formula1Driver();
+                Formula1Driver formula1D = new Formula1Driver();
                 for (int i=0 ; i<seperatedWords.size();  i++){
 
-                    f1.setName(seperatedWords.get(0));
-                    f1.setTeam(seperatedWords.get(1));
-                    f1.setLocation(seperatedWords.get(2));
-                    f1.setNumOfPoints(Integer.parseInt(seperatedWords.get(3)));
-                    f1.setNumOfFirst(Integer.parseInt(seperatedWords.get(4)));
-                    f1.setNumOfSecond(Integer.parseInt(seperatedWords.get(5)));
-                    f1.setNumOfThird(Integer.parseInt(seperatedWords.get(6)));
-                    f1.setNumOfRaces(Integer.parseInt(seperatedWords.get(7)));
+                    formula1D.setName(seperatedWords.get(0));
+                    formula1D.setTeam(seperatedWords.get(1));
+                    formula1D.setLocation(seperatedWords.get(2));
+                    formula1D.setNumOfPoints(Integer.parseInt(seperatedWords.get(3)));
+                    formula1D.setNumOfFirst(Integer.parseInt(seperatedWords.get(4)));
+                    formula1D.setNumOfSecond(Integer.parseInt(seperatedWords.get(5)));
+                    formula1D.setNumOfThird(Integer.parseInt(seperatedWords.get(6)));
+                    formula1D.setNumOfRaces(Integer.parseInt(seperatedWords.get(7)));
 
                 }
-                DriverStatistics.add(f1);
+                DriverStatistics.add(formula1D);
 
             }
 

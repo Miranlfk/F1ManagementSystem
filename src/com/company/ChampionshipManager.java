@@ -8,8 +8,8 @@ public interface ChampionshipManager {
     void displaySpecificDriversStatistics();
     void displayAllDriversStatistics();
     void addARace();
-    void saveDetails();
-    void readDetails();
+    void saveDetailstoTxt();
+    void readDetailsfromTxt();
     void showGUI();
 
 }

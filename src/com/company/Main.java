@@ -9,19 +9,19 @@ public class Main {
 
         Scanner input = new Scanner(System.in);
         Formula1ChampionshipManager f1manager = new Formula1ChampionshipManager();
-        f1manager.readDetails();
+        f1manager.readDetailsfromTxt();
 
     /*
      * Menu Displayed to the User
      */
         System.out.println('\n' + "Welcome to the Formula1 CHAMPIONSHIP!" + '\n');
 
-        System.out.println("Enter '1' to add a New Driver");
-        System.out.println("Enter '2' to remove a Driver");
-        System.out.println("Enter '3' to change a Team's Driver");
-        System.out.println("Enter '4' to display Statistics of a Specific Driver");
-        System.out.println("Enter '5' to display Statistics of All Drivers");
-        System.out.println("Enter '6' to add a Race");
+        System.out.println("Enter '1' to Add a New Driver");
+        System.out.println("Enter '2' to Remove a Driver");
+        System.out.println("Enter '3' to Change a Team's Driver");
+        System.out.println("Enter '4' to Display Statistics of a Specific Driver");
+        System.out.println("Enter '5' to Display Statistics of All Drivers");
+        System.out.println("Enter '6' to Add a Race");
         System.out.println("Enter '7' to Store program data into a Text file");
         System.out.println("Enter '8' to access the Graphical User Interface");
         System.out.println("Enter '0' to Exit the program" );
@@ -49,7 +49,7 @@ public class Main {
                 f1manager.addARace();
 
             } else if (userInputValue.equals("7")) {
-                f1manager.saveDetails();
+                f1manager.saveDetailstoTxt();
 
             } else if (userInputValue.equals("8")) {
                 f1manager.showGUI();
